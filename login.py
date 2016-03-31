@@ -40,8 +40,40 @@ class Client:
         if captcha:
             data['captcha-id'] = captcha['id']
 
-    def login_in_terminal(self):
+        r = self._session.post(urls['index'], data=data)
+        j = r.json()
+        code = int(j['r'])
+        message = j['msg']
+        cookies_str = json.dumps(self._session.cookies.get_dict()) \
+            if code == 0 else ''
+        return code, message, cookies_str
 
+    def login_in_terminal(self):
+        print('====== zhihu login =====')
+
+        email = input('email: ')
+        password = input('password: ')
+
+        captcha = self._get_captcha()
+
+        if captcha:
+            with open('captcha.gif', 'wb') as f:
+                f.write(captcha[0])
+
+            print('please check captcha.gif for captcha')
+            captcha = input('captcha: ')
+            os.remove('captcha.gif')
+
+        print('====== logging.... =====')
+
+        code, msg, cookies = self.login(email, password, captcha)
+
+        if code == 0:
+            print('login successfully')
+        else:
+            print('login failed, reason: {0}'.format(msg))
+
+        return cookies
 
 
     def login_with_cookies(self, cookies):
