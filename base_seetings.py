@@ -16,7 +16,8 @@ urls = {
     "location": "https://www.douban.com/location/",
     "things": "https://dongxi.douban.com/",
     "market": "https://market.douban.com/",
-    "fm": "http://douban.fm/"
+    "fm": "http://douban.fm/",
+    "login": "https://www.douban.com/accounts/login"
 }
 
 
