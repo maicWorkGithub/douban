@@ -2,7 +2,7 @@
 import json
 import requests
 import os
-from base_seetings import *
+from base_settings import *
 from bs4 import BeautifulSoup as BS
 import re
 
@@ -11,7 +11,7 @@ class Client:
     def __init__(self, cookies=None):
         self._session = requests.Session()
         self._session.headers.update(header)
-        self.login_failed = False
+        self.login_succeed = True
         if cookies is not None:
             assert isinstance(cookies, str)
             self.login_with_cookies(cookies)
@@ -47,12 +47,12 @@ class Client:
         # 找到 li.nav-user-account>a>span[0].text, 这个里面有XXX的账号三个字，就匹配这三个字好了，然后还能再给点交互
         account_li = html.find('li', class_="nav-user-account")
         if account_li:
-            self.login_failed = False
+            self.login_succeed = True
             username = account_li.find('span').get_text()[:-3]
             cookies_str = json.dumps(self._session.cookies.get_dict()) or ""
             return username,  cookies_str
         else:
-            self.login_failed = True
+            self.login_succeed = False
 
     def login_in_terminal(self):
         print '====== douban login ====='
@@ -77,7 +77,7 @@ class Client:
             os.remove('captcha.gif')
 
         print '====== logging.... ====='
-        if not self.login_failed:
+        if self.login_succeed:
             username, cookies = self.login(email, password, captcha)
             print 'Welcome, %s , You login successfully!' % username
             return cookies
