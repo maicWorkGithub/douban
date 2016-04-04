@@ -11,11 +11,21 @@
         oFReader = new FileReader();
 
         oFReader.onload = function (oFREvent) {
-            console.log(oFREvent.target.result);
-            // var enc = btoa(oFREvent.target.result);
-            // alert(enc);
-            // alert(atob(enc));
-            document.getElementById("uploadPreview").innerHTML = oFREvent.target.result;
+            var ol = document.querySelector('#ol');
+
+            var json = JSON.parse(window.atob(oFREvent.target.result.substring(oFREvent.target.result.indexOf(',')+1)));
+            for (var i=0; i< json.length; i++){
+                var str = "<ol>";
+                str += "<li><strong>名称：</strong><span>"+ json[i].name +"</span></li>";
+                str += "<li><strong>图片：</strong><img src=" + json[i].image +"></li>";
+                str += "<li><strong>评分：</strong><span>"+ json[i].score +"</span></li>";
+                str += "<li><strong>日期：</strong><span>"+ json[i].date +"</span></li>";
+                str += "<li><strong>地址：</strong><span>"+ json[i].url +"</span></li>";
+                str += "</ol>";
+                var li = document.createElement('li');
+                li.innerHTML = str;
+                ol.appendChild(li);
+            }
         };
 
         function loadImageFile() {
@@ -38,7 +48,8 @@
         </tr>
         </tbody>
     </table>
-    <p><input type="submit" value="Send"/></p>
+    <ol id="ol">
+    </ol>
 
 </form>
 </body>
