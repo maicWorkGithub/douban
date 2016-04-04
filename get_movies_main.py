@@ -31,14 +31,20 @@ class GetMoviesMain:
         self._get_collect(self.collect_url)
 
     def _get_page_num(self, url):
+        mine_header = header
+        mine_header['Host'] = 'movie.douban.com'
+        self._session.headers.update(mine_header)
         print self.movie_info
         html = self._session.get(url + 'mine').text
         html_soup = BS(html, 'lxml')
         # 这里得到的却是https://www.douban.com/mine, 即个人主页.
+        # 问题原因: 是用了urls里的movie值,这里的地址是https开头的...
         # 我修改Host和Referer为movie.douban.com/之后是404
         # 就先用这个个人主页吧...醉了
 
+        # 第二个是https://www.douban.com/mine的解析,第一个是movie.douban.com/mine的解析
         person_collect = html_soup.find('div', id='db-movie-mine') or html_soup.find('div', id='movie')
+
         person_collect_url = person_collect.find('a')
         self.movie_info['total'] = re.findall(r'\d+', person_collect_url.get_text())
         self.collect_url = person_collect_url['href']
@@ -56,7 +62,7 @@ class GetMoviesMain:
                 'image': item.find('div', class_='pic').find('img')['src'],
                 'date': item.find('span', class_='date').get_text(),
                 'score': re.findall(r'\d+', item.find('span', class_='date')
-                                    .previous_element['class'][0])[0],
+                                    .previous_sibling.previous_sibling['class'][0])[0],
 
             })
 
