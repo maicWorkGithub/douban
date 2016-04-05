@@ -4,20 +4,19 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <title>Image preview example</title>
     <style>
-        #ol{
-            overflow: hidden;
+        ol{
             list-style: none;
             margin: 0;
             padding: 0;
         }
+        #ol{
+            overflow: hidden;
+        }
         .item{
-            margin: 0;
-            padding: 0;
             width: 200px;
             height: 200px;
             float: left;
             border: 1px solid #000;
-            list-style: none;
         }
     </style>
     <script type="text/javascript">
@@ -28,14 +27,17 @@
 
         oFReader.onload = function (oFREvent) {
             var ol = document.querySelector('#ol');
+            var p = document.querySelector('p');
 
             var json = JSON.parse(window.atob(oFREvent.target.result.substring(oFREvent.target.result.indexOf(',')+1)));
-            for (var i=0; i< json.length; i++){
+            p.innerHTML = "看过的电影总数为："+ json.total ;
+            var movies = json['movies'];
+            for (var i=0; i< movies.length; i++){
                 var str = "<ol class='item'>";
-                str += "<li><strong>名称：</strong><span><a href="+ json[i].url +">"+ json[i].name +"</a></span></li>";
-                str += "<li><strong>图片：</strong><img src=" + json[i].image +"></li>";
-                str += "<li><strong>评分：</strong><span>"+ json[i].score +"</span></li>";
-                str += "<li><strong>日期：</strong><span>"+ json[i].date +"</span></li>";
+                str += "<li><strong>名称：</strong><span><a href="+ movies[i].url +">"+ movies[i].name +"</a></span></li>";
+                str += "<li><strong>图片：</strong><img src=" + movies[i].image +"></li>";
+                str += "<li><strong>评分：</strong><span>"+ movies[i].score +"</span></li>";
+                str += "<li><strong>日期：</strong><span>"+ movies[i].date +"</span></li>";
                 str += "</ol>";
                 var li = document.createElement('li');
                 li.innerHTML = str;
@@ -63,6 +65,7 @@
         </tr>
         </tbody>
     </table>
+    <p></p>
     <ol id="ol">
     </ol>
 

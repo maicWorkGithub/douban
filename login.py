@@ -100,6 +100,10 @@ class Client:
         cookies_dict = json.loads(cookies)
         self._session.cookies.update(cookies_dict)
 
+    def session(self):
+        assert self.login_succeed
+        return self._session
+
 
 if __name__ == '__main__':
     lg = Client()

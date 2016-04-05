@@ -21,11 +21,10 @@ from login import Client
 '''
 
 
-class GetMoviesMain:
+class GetMoviesMine:
     def __init__(self):
-        cl = Client('cookies')
-        self.login = cl
-        self._session = cl._session
+        self.login = Client()
+        self._session = self.login.session()
         self.movie_info = {'movies': []}
         self._get_collect_url(urls['movie'])
         self._get_collect(self.collect_url)
@@ -66,13 +65,13 @@ class GetMoviesMain:
         count = int(self._get_collect_page_count(url))
 
         for index in range(count):
-            page_referer = ''
-            self._session.headers['Referer'] = None
+            collect_header = self._session.headers
+            collect_header['Referer'] = None
             data['start'] = step * index
             # req = requests.Request('GET', url, data=data, headers=self._session.headers)
             # html = self._session.prepare_request(req)
-            html = self._session.get(url=url, params=data)
-            self._session.headers['Referer'] = html.url
+            html = self._session.get(url=url, params=data, header=collect_header)
+            collect_header['Referer'] = html.url
             print html.url
             html_soup = BS(html.text, 'lxml')
             items = html_soup.find_all('div', class_='item')
@@ -93,9 +92,9 @@ class GetMoviesMain:
 
     def create_movies_json(self):
         with open('movies.json', 'w') as f:
-            f.write(json.dumps(self.movie_info['movies']))
+            f.write(json.dumps(self.movie_info))
 
 
 if __name__ == '__main__':
-    gm = GetMoviesMain()
+    gm = GetMoviesMine()
     gm.create_movies_json()
