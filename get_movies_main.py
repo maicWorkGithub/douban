@@ -1,9 +1,8 @@
 # coding: utf-8
 import json
 import re
-
 from bs4 import BeautifulSoup as BS
-
+import requests
 from base_settings import *
 from login import Client
 
@@ -24,8 +23,8 @@ from login import Client
 
 class GetMoviesMain:
     def __init__(self):
-        cl = Client()
-        self.login = Client.login_with_cookies(cl, 'cookies')
+        cl = Client('cookies')
+        self.login = cl
         self._session = cl._session
         self.movie_info = {'movies': []}
         self._get_collect_url(urls['movie'])
@@ -56,7 +55,6 @@ class GetMoviesMain:
         return html_soup.find('span', class_='thispage')['data-total-page']
 
     def _get_collect(self, url):
-        count = int(self._get_collect_page_count(url))
         step = 15
         data = {
             "sort": "time",
@@ -65,20 +63,32 @@ class GetMoviesMain:
             "mode": "grid"
         }
 
+        count = int(self._get_collect_page_count(url))
+
         for index in range(count):
+            page_referer = ''
+            self._session.headers['Referer'] = None
             data['start'] = step * index
-            html = self._session.get(url).text
-            html_soup = BS(html, 'lxml')
+            # req = requests.Request('GET', url, data=data, headers=self._session.headers)
+            # html = self._session.prepare_request(req)
+            html = self._session.get(url=url, params=data)
+            self._session.headers['Referer'] = html.url
+            print html.url
+            html_soup = BS(html.text, 'lxml')
             items = html_soup.find_all('div', class_='item')
             for item in items:
+                if item.find('span', class_='date').previous_sibling.previous_sibling:
+                    score_span = re.findall(r'\d+', item.find('span', class_='date')
+                                            .previous_sibling.previous_sibling['class'][0])[0]
+                else:
+                    score_span = ''
+
                 self.movie_info['movies'].append({
                     "name": item.find('li', class_='title').find('em').get_text(),
                     'url': item.find('div', class_='pic').find('a')['href'],
                     'image': item.find('div', class_='pic').find('img')['src'],
                     'date': item.find('span', class_='date').get_text(),
-                    'score': re.findall(r'\d+', item.find('span', class_='date')
-                                        .previous_sibling.previous_sibling['class'][0])[0],
-
+                    'score': score_span
                 })
 
     def create_movies_json(self):

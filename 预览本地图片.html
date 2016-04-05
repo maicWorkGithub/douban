@@ -3,11 +3,27 @@
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <title>Image preview example</title>
+    <style>
+        #ol{
+            overflow: hidden;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .item{
+            margin: 0;
+            padding: 0;
+            width: 200px;
+            height: 200px;
+            float: left;
+            border: 1px solid #000;
+            list-style: none;
+        }
+    </style>
     <script type="text/javascript">
         var input = document.getElementById("uploadImage");
         var preview = document.getElementById("uploadPreview");
         var btn = document.querySelector('input[type="submit"]');
-        var movie_json = "data:application/json;base64,WwogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTI5MjIxNy8iLAogICAgImRhdGUiOiAiMjAxNi0wNC0wMSIsCiAgICAiaW1hZ2UiOiAiaHR0cHM6Ly9pbWcxLmRvdWJhbmlvLmNvbS92aWV3L21vdmllX3Bvc3Rlcl9jb3Zlci9pcHN0L3B1YmxpYy9wNzkyMjQ4MjMzLmpwZyIsCiAgICAic2NvcmUiOiAiMyIsCiAgICAibmFtZSI6ICJcdTdhNDZcdThkNmJcdTUxNzBcdTkwNTMgLyBNdWxob2xsYW5kIERyLiIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTM0MDUxNy8iLAogICAgImRhdGUiOiAiMjAxNi0wMy0zMCIsCiAgICAiaW1hZ2UiOiAiaHR0cHM6Ly9pbWcxLmRvdWJhbmlvLmNvbS92aWV3L21vdmllX3Bvc3Rlcl9jb3Zlci9pcHN0L3B1YmxpYy9wMTQ2NzAxNDc1NC5qcGciLAogICAgInNjb3JlIjogIjMiLAogICAgIm5hbWUiOiAiXHU1MjFkXHU1NDNiIC8gTGEgYm91bSIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvNTMyNzI2OC8iLAogICAgImRhdGUiOiAiMjAxNi0wMy0yOSIsCiAgICAiaW1hZ2UiOiAiaHR0cHM6Ly9pbWcxLmRvdWJhbmlvLmNvbS92aWV3L21vdmllX3Bvc3Rlcl9jb3Zlci9pcHN0L3B1YmxpYy9wMjMyMzI1ODQyOS5qcGciLAogICAgInNjb3JlIjogIjMiLAogICAgIm5hbWUiOiAiXHU4MzUyXHU5MWNlXHU3MzBlXHU0ZWJhIC8gVGhlIFJldmVuYW50IgogIH0sCiAgewogICAgInVybCI6ICJodHRwczovL21vdmllLmRvdWJhbi5jb20vc3ViamVjdC8yMDMyNjY2NS8iLAogICAgImRhdGUiOiAiMjAxNi0wMy0yNiIsCiAgICAiaW1hZ2UiOiAiaHR0cHM6Ly9pbWcxLmRvdWJhbmlvLmNvbS92aWV3L21vdmllX3Bvc3Rlcl9jb3Zlci9pcHN0L3B1YmxpYy9wMjI5Mzk1NDExOC5qcGciLAogICAgInNjb3JlIjogIjIiLAogICAgIm5hbWUiOiAiXHU2NjFmXHU3NDAzXHU1OTI3XHU2MjE4N1x1ZmYxYVx1NTM5Zlx1NTI5Ylx1ODljOVx1OTE5MiAvIFN0YXIgV2FyczogVGhlIEZvcmNlIEF3YWtlbnMiCiAgfSwKICB7CiAgICAidXJsIjogImh0dHBzOi8vbW92aWUuZG91YmFuLmNvbS9zdWJqZWN0LzM3MTgyNzkvIiwKICAgICJkYXRlIjogIjIwMTYtMDMtMjYiLAogICAgImltYWdlIjogImh0dHBzOi8vaW1nMS5kb3ViYW5pby5jb20vdmlldy9tb3ZpZV9wb3N0ZXJfY292ZXIvaXBzdC9wdWJsaWMvcDIzMDkyNjQyMTIuanBnIiwKICAgICJzY29yZSI6ICIzIiwKICAgICJuYW1lIjogIlx1NmI3Ylx1NGY4ZCAvIERlYWRwb29sIgogIH0sCiAgewogICAgInVybCI6ICJodHRwczovL21vdmllLmRvdWJhbi5jb20vc3ViamVjdC81NDQ2MTk3LyIsCiAgICAiZGF0ZSI6ICIyMDE2LTAzLTI2IiwKICAgICJpbWFnZSI6ICJodHRwczovL2ltZzMuZG91YmFuaW8uY29tL3ZpZXcvbW92aWVfcG9zdGVyX2NvdmVyL2lwc3QvcHVibGljL3AyMjQ4MjA0NjU2LmpwZyIsCiAgICAic2NvcmUiOiAiMiIsCiAgICAibmFtZSI6ICJcdTk0YzFcdTYyZjMgLyBTb3V0aHBhdyIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMzU4MjE4MS8iLAogICAgImRhdGUiOiAiMjAxNi0wMy0yNSIsCiAgICAiaW1hZ2UiOiAiaHR0cHM6Ly9pbWcxLmRvdWJhbmlvLmNvbS92aWV3L21vdmllX3Bvc3Rlcl9jb3Zlci9pcHN0L3B1YmxpYy9wMjI2NzQzMjIzNy5qcGciLAogICAgInNjb3JlIjogIjIiLAogICAgIm5hbWUiOiAiXHU2ZDc3XHU2ZDBiXHU2ZGYxXHU1OTA0IC8gSW4gdGhlIEhlYXJ0IG9mIHRoZSBTZWEiCiAgfSwKICB7CiAgICAidXJsIjogImh0dHBzOi8vbW92aWUuZG91YmFuLmNvbS9zdWJqZWN0LzEwNTY4Mzg1LyIsCiAgICAiZGF0ZSI6ICIyMDE2LTAzLTI1IiwKICAgICJpbWFnZSI6ICJodHRwczovL2ltZzMuZG91YmFuaW8uY29tL3ZpZXcvbW92aWVfcG9zdGVyX2NvdmVyL2lwc3QvcHVibGljL3AyMzE2MTMzMTQ1LmpwZyIsCiAgICAic2NvcmUiOiAiMiIsCiAgICAibmFtZSI6ICJcdTU3MzBcdTVmYzNcdTg0MjVcdTY1NTEgLyBUaGUgMzMiCiAgfSwKICB7CiAgICAidXJsIjogImh0dHBzOi8vbW92aWUuZG91YmFuLmNvbS9zdWJqZWN0LzI1ODA5Mzg0LyIsCiAgICAiZGF0ZSI6ICIyMDE2LTAzLTI1IiwKICAgICJpbWFnZSI6ICJodHRwczovL2ltZzEuZG91YmFuaW8uY29tL3ZpZXcvbW92aWVfcG9zdGVyX2NvdmVyL2lwc3QvcHVibGljL3AyMjg3NTU3MzQyLmpwZyIsCiAgICAic2NvcmUiOiAiMSIsCiAgICAibmFtZSI6ICJcdTY3ODFcdTc2ZDdcdTgwMDUgLyBQb2ludCBCcmVhayIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMjQ3NTE3NTYvIiwKICAgICJkYXRlIjogIjIwMTYtMDMtMjIiLAogICAgImltYWdlIjogImh0dHBzOi8vaW1nMS5kb3ViYW5pby5jb20vdmlldy9tb3ZpZV9wb3N0ZXJfY292ZXIvaXBzdC9wdWJsaWMvcDIyOTI5NzY4NDkuanBnIiwKICAgICJzY29yZSI6ICIzIiwKICAgICJuYW1lIjogIlx1ODAwMVx1NzBhZVx1NTEzZiIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTk5NTcwODMvIiwKICAgICJkYXRlIjogIjIwMTYtMDMtMjIiLAogICAgImltYWdlIjogImh0dHBzOi8vaW1nMS5kb3ViYW5pby5jb20vdmlldy9tb3ZpZV9wb3N0ZXJfY292ZXIvaXBzdC9wdWJsaWMvcDIyNTE2ODU2ODkuanBnIiwKICAgICJzY29yZSI6ICIyIiwKICAgICJuYW1lIjogIlx1NmNmMFx1OGZlYVx1NzE4YTIgLyBUZWQgMiIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMjU5MjA4ODUvIiwKICAgICJkYXRlIjogIjIwMTYtMDMtMjIiLAogICAgImltYWdlIjogImh0dHBzOi8vaW1nMS5kb3ViYW5pby5jb20vdmlldy9tb3ZpZV9wb3N0ZXJfY292ZXIvaXBzdC9wdWJsaWMvcDIyOTk4MjMwNDMuanBnIiwKICAgICJzY29yZSI6ICIyIiwKICAgICJuYW1lIjogIlx1Nzk1ZVx1NjNhMlx1NTkwZlx1NmQxYlx1NTE0YiAvIFNoZXJsb2NrOiBUaGUgQWJvbWluYWJsZSBCcmlkZSIKICB9LAogIHsKICAgICJ1cmwiOiAiaHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMjU2NjIzMjkvIiwKICAgICJkYXRlIjogIjIwMTYtMDMtMjIiLAogICAgImltYWdlIjogImh0dHBzOi8vaW1nMS5kb3ViYW5pby5jb20vdmlldy9tb3ZpZV9wb3N0ZXJfY292ZXIvaXBzdC9wdWJsaWMvcDIzMTU2NzI2NDcuanBnIiwKICAgICJzY29yZSI6ICI0IiwKICAgICJuYW1lIjogIlx1NzVhZlx1NzJjMlx1NTJhOFx1NzI2OVx1NTdjZSAvIFpvb3RvcGlhIgogIH0sCiAgewogICAgInVybCI6ICJodHRwczovL21vdmllLmRvdWJhbi5jb20vc3ViamVjdC82OTczMzc2LyIsCiAgICAiZGF0ZSI6ICIyMDE2LTAzLTIyIiwKICAgICJpbWFnZSI6ICJodHRwczovL2ltZzEuZG91YmFuaW8uY29tL3ZpZXcvbW92aWVfcG9zdGVyX2NvdmVyL2lwc3QvcHVibGljL3AxOTM1MDY3MDQ5LmpwZyIsCiAgICAic2NvcmUiOiAiMyIsCiAgICAibmFtZSI6ICJcdTgxZjRcdTYyMTFcdTRlZWNcdTdlYzhcdTVjMDZcdTkwMWRcdTUzYmJcdTc2ODRcdTk3NTJcdTY2MjUiCiAgfSwKICB7CiAgICAidXJsIjogImh0dHBzOi8vbW92aWUuZG91YmFuLmNvbS9zdWJqZWN0LzIxMzUyODE0LyIsCiAgICAiZGF0ZSI6ICIyMDE2LTAzLTIyIiwKICAgICJpbWFnZSI6ICJodHRwczovL2ltZzMuZG91YmFuaW8uY29tL3ZpZXcvbW92aWVfcG9zdGVyX2NvdmVyL2lwc3QvcHVibGljL3AyMTgxMjA3ODM1LmpwZyIsCiAgICAic2NvcmUiOiAiNCIsCiAgICAibmFtZSI6ICJcdTVmNTJcdTY3NjUiCiAgfQpd";
         oFReader = new FileReader();
 
         oFReader.onload = function (oFREvent) {
@@ -15,12 +31,11 @@
 
             var json = JSON.parse(window.atob(oFREvent.target.result.substring(oFREvent.target.result.indexOf(',')+1)));
             for (var i=0; i< json.length; i++){
-                var str = "<ol>";
-                str += "<li><strong>名称：</strong><span>"+ json[i].name +"</span></li>";
+                var str = "<ol class='item'>";
+                str += "<li><strong>名称：</strong><span><a href="+ json[i].url +">"+ json[i].name +"</a></span></li>";
                 str += "<li><strong>图片：</strong><img src=" + json[i].image +"></li>";
                 str += "<li><strong>评分：</strong><span>"+ json[i].score +"</span></li>";
                 str += "<li><strong>日期：</strong><span>"+ json[i].date +"</span></li>";
-                str += "<li><strong>地址：</strong><span>"+ json[i].url +"</span></li>";
                 str += "</ol>";
                 var li = document.createElement('li');
                 li.innerHTML = str;
