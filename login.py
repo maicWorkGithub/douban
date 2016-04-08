@@ -14,7 +14,10 @@ class Client:
         self.login_succeed = True
         if cookies is not None:
             assert isinstance(cookies, str)
-            self.login_with_cookies(cookies)
+            if os.path.isfile(cookies):
+                self.login_with_cookies(cookies)
+            else:
+                self.create_cookies()
 
     def _get_captcha(self):
         html = self._session.get(urls['index']).text

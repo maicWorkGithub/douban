@@ -23,7 +23,7 @@ from login import Client
 
 class GetMoviesMine:
     def __init__(self):
-        self.login = Client()
+        self.login = Client('cookies')
         self._session = self.login.session()
         self.movie_info = {'movies': []}
         self._get_collect_url(urls['movie'])
