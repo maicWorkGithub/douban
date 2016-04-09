@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <title>Image preview example</title>
+    <style>
+        ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #ol {
+            overflow: hidden;
+        }
+
+        .item {
+            width: 300px;
+            height: 400px;
+            float: left;
+            /*border: 1px solid #000;*/
+        }
+
+        img {
+            vertical-align: top;
+            width: 300px;
+            height: 400px;
+        }
+    </style>
+    <script type="text/javascript">
+        var input = document.getElementById("uploadImage");
+        var preview = document.getElementById("uploadPreview");
+        var btn = document.querySelector('input[type="submit"]');
+        oFReader = new FileReader();
+
+        oFReader.onload = function (oFREvent) {
+            var ol = document.querySelector('#ol');
+
+            var movies = JSON.parse(window.atob(oFREvent.target.result.substring(oFREvent.target.result.indexOf(',') + 1)));
+            console.log(movies.length);
+            for (var i = 0; i < movies.length; i++) {
+                var title = '' + movies[i].title + ', 评分：' + movies[i].rate;
+                console.log(title);
+                var str = "<a href=" + movies[i].url + " title=" + title + " class='item'><img src=" + movies[i].cover + "></a>";
+                var div = document.createElement('div');
+//                var img_hei = movies[i].cover;
+                div.innerHTML = str;
+                ol.appendChild(div);
+            }
+        };
+
+        /*
+         * 先获取页面宽度，除以300，向下取整，得到N
+         * 创建N个li在ol里
+         * 从第N个json开始，计算所有li元素的高度，得到最小值，然后添加到这个最小值的列中。*/
+        //        var win_width = window.innerWidth;
+        //        var img_width = 300;
+        //        var rows = Math.floor(win_width / img_width);
+        //        console.log(rows);
+        //        var ol = document.querySelector('#ol');
+        //        for (var i = 0; i < rows; i++) {
+        //            var li = document.createElement('li');
+        //            li.className = "row row" + (i + 1);
+        //            ol.appendChild(li);
+        //        }
+        function appendImage() {
+
+        }
+        //        window.onresize = function () {
+        //            win_width = window.innerWidth;
+        //            rows = Math.floor(win_width / img_width);
+        //            console.log(rows);
+        //            for (var i=0;i<rows;i++) {
+        //                var li = document.createElement('li');
+        //                li.className = "row row"+ (i + 1);
+        //                ol.appendChild(div);
+        //            }
+        //        };
+
+        function loadImageFile() {
+            if (document.getElementById("uploadImage").files.length === 0) {
+                return;
+            }
+            var oFile = document.getElementById("uploadImage").files[0];
+            oFReader.readAsDataURL(oFile);
+        }
+    </script>
+</head>
+
+<body onload="loadImageFile();">
+<form name="uploadForm">
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                <div id="uploadPreview"></div>
+            </td>
+            <td><input id="uploadImage" type="file" name="myPhoto" onchange="loadImageFile();"/></td>
+        </tr>
+        </tbody>
+    </table>
+    <p></p>
+    <ol id="ol">
+    </ol>
+
+</form>
+</body>
+</html>

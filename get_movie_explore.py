@@ -1,17 +1,9 @@
 # coding: utf-8
 import json
 import requests
-from requests import Request
-from bs4 import BeautifulSoup as BS
-from base_settings import *
+import urllib
 from login import Client
-
-
-class RequestWithSharp(requests.Session):
-    def prepare_request(self, data):
-        p = super(RequestWithSharp, self).prepare_request(data)
-        p.url = p.url.replace('?', '#!')
-        return p
+import time
 
 
 # 拉取豆瓣高分没看过的，评分大于sore分数的电影。一共收集x部电影
@@ -19,18 +11,18 @@ class GetMovieExplore:
     def __init__(self):
         self.login = Client('cookies')
         self.sore = 8
-        self.x = 20
+        self.x = 1000
         self._session = self.login.session()
-        self.url = urls['movie'] + "explore"
-        explore_header = header
-        explore_header['Host'] = 'movie.douban.com'
-        explore_header['Referer'] = "https://movie.douban.com/explore"
-        explore_header['x-requested-with'] = "XMLHttpRequest"
-        # path: /j/search_subjects?type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=recommend&watched=on&page_limit=20&page_start=0
-        self._session.headers.update(explore_header)
-        self.high_mark_movies = []
+        self.header = {
+            'Referer': 'https://movie.douban.com/explore',
+            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0',
+            'Host': 'movie.douban.com',
+            'x-requested-with': "XMLHttpRequest"
+        }
+        self._session.headers.update(self.header)
 
     def get_explore_json(self):
+        result = []
         data = {
             "type": "movie",
             "tag": "豆瓣高分",
@@ -39,23 +31,30 @@ class GetMovieExplore:
             "page_limit": 20,
             "page_start": 0
         }
-        page_count = 0
-        # html = self._session.get(self.url, params=data, headers=header)
-        req = Request('GET',
-                      urls['movie'] + 'j/search_subjects',
-                      data=data,
-                      headers=header)
-        sharp = RequestWithSharp()
-        req = sharp.prepare_request(req)
-        html = self._session.send(req)
-        while len(self.high_mark_movies) < self.x:
+        count = 0
+        while len(result) < self.x:
+            last_len = len(result)
+            data['page_start'] = data['page_limit'] * count
+            url_str = '/j/search_subjects?'
+            for key in data:
+                url_str += key + '=' + urllib.quote(str(data[key]))
+            count += 1
+            self.header['path'] = url_str
+            req = requests.Request('GET',
+                                   'http://movie.douban.com/j/search_subjects',
+                                   params=data,
+                                   headers=self.header)
+            prepped = self._session.prepare_request(req)
+            resp = self._session.send(prepped)
+            result.extend(resp.json()['subjects'])
+            time.sleep(2)
+            if last_len == len(result):
+                break
 
-            page_count += 1
-            data["page_start"] = data['page_limit'] * page_count
-
+        # todo: sort
+        # result = sorted(result.iteritems(), key=lambda d:d[1], reverse = True)
+        with open('high_mark_movie.json', 'w') as f:
+            f.write(json.dumps(result))
 if __name__ == "__main__":
     gme = GetMovieExplore()
     gme.get_explore_json()
-
-# https://movie.douban.com/explore?sort=recommend&page_limit=20&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&watched=on&page_start=0&type=movie
-# https://movie.douban.com/explore#!type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=recommend&watched=on&page_limit=20&page_start=0
