@@ -62,6 +62,7 @@ class Client:
 
         email = raw_input('email: ')
         password = raw_input('password: ')
+        print 'email: %s, password: %s' % (email, password)
         captcha = None
 
         # ( captcha_url, captcha_id )
