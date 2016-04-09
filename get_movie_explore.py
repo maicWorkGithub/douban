@@ -30,29 +30,32 @@ class GetMovieExplore:
         self._session.headers.update(explore_header)
         self.high_mark_movies = []
 
-    def get_explore_page(self):
+    def get_explore_json(self):
         data = {
             "type": "movie",
             "tag": "豆瓣高分",
             "sort": "recommend",
             "watched": "on",
-            "page_limit": "20",
+            "page_limit": 20,
             "page_start": 0
         }
+        page_count = 0
         # html = self._session.get(self.url, params=data, headers=header)
-        req = Request('GET', self.url, data=data, headers=header)
+        req = Request('GET',
+                      urls['movie'] + 'j/search_subjects',
+                      data=data,
+                      headers=header)
         sharp = RequestWithSharp()
         req = sharp.prepare_request(req)
         html = self._session.send(req)
-        print html.json
-        # while len(self.high_mark_movies) < self.x:
-        #
-        #
-        #     data["page_start"] += 1
+        while len(self.high_mark_movies) < self.x:
+
+            page_count += 1
+            data["page_start"] = data['page_limit'] * page_count
 
 if __name__ == "__main__":
     gme = GetMovieExplore()
-    gme.get_explore_page()
+    gme.get_explore_json()
 
 # https://movie.douban.com/explore?sort=recommend&page_limit=20&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&watched=on&page_start=0&type=movie
 # https://movie.douban.com/explore#!type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=recommend&watched=on&page_limit=20&page_start=0
