@@ -104,7 +104,7 @@ class Client:
         cookies_dict = json.loads(cookies)
         self._session.cookies.update(cookies_dict)
 
-    def session(self):
+    def return_session(self):
         assert self.login_succeed
         return self._session
 

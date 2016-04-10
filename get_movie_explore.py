@@ -12,7 +12,7 @@ class GetMovieExplore:
         self.login = Client('cookies')
         self.sore = 8
         self.x = 1000
-        self._session = self.login.session()
+        self._session = self.login.return_session()
         self.header = {
             'Referer': 'https://movie.douban.com/explore',
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0',
